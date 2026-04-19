@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meet the Team — Repliclassics LLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Barlow:ital,wght@0,300;0,400;0,500;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:          #110E09;
+      --surface:     #1A1510;
+      --raised:      #221C13;
+      --rust:        #9B1818;
+      --rust-lit:    #B82020;
+      --rust-dim:    #6B1010;
+      --cream:       #D8C998;
+      --cream-dim:   #8A7A58;
+      --cream-faint: rgba(216,201,152,0.08);
+      --text:        #D8C998;
+      --text-dim:    #7A6E50;
+      --border:      rgba(216,201,152,0.14);
+      --border-rust: rgba(155,24,24,0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── GRAIN TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9997;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    /* ── TYPE ── */
+    .display   { font-family: 'Bebas Neue', 'Impact', sans-serif; letter-spacing: 0.03em; line-height: 0.95; }
+    .stamp     { font-family: 'Special Elite', 'Courier New', monospace; }
+    .condensed { font-family: 'Barlow Condensed', sans-serif; }
+
+    /* ── NAV ── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.5rem 3rem;
+      transition: background 0.4s, padding 0.35s;
+      background: rgba(17,14,9,0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    #navbar.scrolled {
+      background: rgba(17, 14, 9, 0.96);
+      backdrop-filter: blur(10px);
+      padding: 1.1rem 3rem;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1340px; margin: 0 auto; }
+
+    .nav-logo-wrap { display: flex; align-items: center; gap: 1.25rem; text-decoration: none; }
+    .nav-logo-img  { height: 40px; width: auto; filter: brightness(0) invert(0.85) sepia(0.4) saturate(1.2); }
+    .nav-logo-badge {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.72rem;
+      color: var(--rust-lit);
+      border: 1px solid var(--border-rust);
+      padding: 3px 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-links { display: flex; gap: 3rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(216,201,152,0.72);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+
+    .btn-nav {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none;
+      color: var(--bg);
+      background: var(--rust);
+      padding: 0.75rem 1.85rem;
+      border: none; cursor: pointer;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-nav:hover { background: var(--rust-lit); transform: translateY(-1px); }
+    .btn-nav:active { transform: translateY(0); background: var(--rust-dim); }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none; flex-direction: column; justify-content: center;
+      gap: 6px; cursor: pointer; padding: 6px;
+      background: none; border: none; z-index: 1001;
+    }
+    .hamburger span {
+      display: block; width: 26px; height: 2px; background: var(--cream);
+      transition: transform 0.3s ease, opacity 0.2s ease;
+      transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── MOBILE NAV ── */
+    #mobile-nav {
+      display: none; position: fixed; inset: 0;
+      background: #0D0A06; z-index: 998;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 0; padding: 2rem;
+    }
+    #mobile-nav.open { display: flex; }
+    .mobile-nav-link {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.75rem;
+      letter-spacing: 0.06em; color: rgba(216,201,152,0.65);
+      text-decoration: none; padding: 0.5rem 0;
+      transition: color 0.2s; display: block; text-align: center;
+    }
+    .mobile-nav-link:hover, .mobile-nav-link:active { color: var(--cream); }
+    .mobile-nav-rule { width: 2rem; height: 1px; background: rgba(155,24,24,0.4); margin: 0.4rem auto; }
+    .mobile-nav-shop { margin-top: 2rem; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 11rem 3rem 5rem;
+      max-width: 1340px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .page-hero-eyebrow {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.78rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--rust-lit);
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .page-hero-eyebrow::before {
+      content: ''; display: block;
+      width: 2.5rem; height: 1px;
+      background: var(--rust);
+    }
+    .page-hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 7.5rem);
+      letter-spacing: 0.03em; line-height: 0.9;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+    }
+    .page-hero-title span { color: var(--rust); }
+    .page-hero-sub {
+      font-family: 'Barlow', sans-serif;
+      font-size: 1.1rem; font-weight: 300;
+      line-height: 1.7; color: rgba(216,201,152,0.65);
+      max-width: 560px;
+    }
+    .rule-rust {
+      width: 2.5rem; height: 2px;
+      background: var(--rust);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── TEAM GRID ── */
+    #team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(216,201,152,0.06);
+    }
+
+    .team-card {
+      background: var(--surface);
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .team-card:hover { background: var(--raised); }
+
+    .team-card-img {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+    .team-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block;
+      filter: sepia(0.25) contrast(1.08);
+      transition: transform 0.7s ease, filter 0.4s ease;
+    }
+    .team-card:hover .team-card-img img {
+      transform: scale(1.04);
+      filter: sepia(0.1) contrast(1.12);
+    }
+    .team-card-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(17,14,9,0.88) 0%, rgba(17,14,9,0.15) 55%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .team-card-body {
+      padding: 1.5rem 1.5rem 1.75rem;
+      display: flex; flex-direction: column;
+      border-top: 1px solid var(--border);
+    }
+
+    .team-card-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem; color: var(--rust);
+      letter-spacing: 0.08em; margin-bottom: 0.6rem;
+    }
+    .team-card-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.75rem; letter-spacing: 0.04em;
+      color: var(--cream); line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .team-card-role {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.68rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--rust-lit);
+    }
+
+    /* corner accent */
+    .team-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 0; height: 0;
+      border-top: 28px solid var(--rust-dim);
+      border-right: 28px solid transparent;
+      transition: border-top-color 0.3s;
+    }
+    .team-card:hover::before { border-top-color: var(--rust); }
+
+    /* ── WORN DIVIDER ── */
+    .section-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent);
+      margin: 0;
+    }
+
+    /* ── EYEBROW ── */
+    .eyebrow {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.78rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: #C41C1C;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      letter-spacing: 0.03em; line-height: 0.92;
+      color: var(--cream);
+    }
+
+    /* ── BODY COPY ── */
+    .body-copy {
+      font-size: 1rem; font-weight: 300;
+      line-height: 1.8; color: rgba(216,201,152,0.72);
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      text-decoration: none;
+      color: #0D0A06;
+      background: var(--rust);
+      padding: 0.85rem 2.25rem;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--rust-lit); transform: translateY(-2px); }
+    .btn-primary:active { background: var(--rust-dim); transform: translateY(0); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.22s; }
+    .d3 { transition-delay: 0.34s; }
+    .d4 { transition-delay: 0.48s; }
+
+    /* ── TABLET ── */
+    @media (max-width: 1024px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none !important; }
+      .btn-nav { display: none; }
+      .nav-logo-badge { display: none; }
+      #navbar { padding: 1.1rem 1.5rem; }
+      #navbar.scrolled { padding: 0.9rem 1.5rem; }
+      #team-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .page-hero { padding: 9rem 1.5rem 4rem; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      #navbar { padding: 1rem 1.25rem; }
+      .page-hero { padding: 8rem 1.25rem 3rem; }
+      #team-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .team-card-name { font-size: 1.35rem !important; }
+      #team-section > div { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+      footer > div { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+      .footer-row { flex-direction: column !important; gap: 1.5rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo-wrap">
+      <img src="https://static.wixstatic.com/media/06731e_df59151404f048f9ab4a499907724679~mv2.png/v1/crop/x_20,y_0,w_1230,h_256/fill/w_320,h_67,al_c,q_85,enc_avif,quality_auto/black%20actul_edited.png"
+           alt="Repliclassics" class="nav-logo-img">
+      <span class="nav-logo-badge">Est. Bowling Green, KY</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html#work">Our Work</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="index.html#shop">Parts Shop</a></li>
+      <li><a href="team.html" style="color:var(--cream);">Team</a></li>
+    </ul>
+
+    <a href="index.html#shop" class="btn-nav">Shop Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobile-nav" aria-hidden="true">
+  <a href="index.html#work" class="mobile-nav-link">Our Work</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="index.html#about" class="mobile-nav-link">About</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="index.html#services" class="mobile-nav-link">Services</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="index.html#shop" class="mobile-nav-link">Parts Shop</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="index.html#contact" class="mobile-nav-link">Contact</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="team.html" class="mobile-nav-link" style="color:var(--cream);">Team</a>
+  <div class="mobile-nav-shop">
+    <a href="https://repliclassics.myshopify.com" target="_blank"
+       style="font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#0D0A06; background:#9B1818; padding:0.9rem 2.5rem; display:inline-block; clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); text-decoration:none;">Shop Now</a>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE HERO ═══════════════ -->
+<div style="background:var(--surface); border-bottom:1px solid var(--border);">
+  <div class="page-hero">
+    <p class="page-hero-eyebrow reveal">— The People Behind It —</p>
+    <h1 class="page-hero-title reveal d1">
+      MEET<br>THE <span>TEAM</span>
+    </h1>
+    <p class="page-hero-sub reveal d2">
+      People from all different backgrounds and cultures, united by a shared obsession with classic Chevrolet trucks and building things right.
+    </p>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════ TEAM GRID ═══════════════ -->
+<section id="team-section" style="padding: 5rem 0 7rem;">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; margin-bottom:3rem;">
+      <div class="reveal">
+        <p class="eyebrow">— Bowling Green, KY —</p>
+        <div class="rule-rust"></div>
+        <h2 class="section-heading">THE CREW</h2>
+      </div>
+      <p class="body-copy reveal d1" style="max-width:360px;">Built by brothers, grown by passion. Every person on this team brings something real to the floor.</p>
+    </div>
+
+    <div id="team-grid" class="reveal d1">
+
+      <!-- Brian Jones -->
+      <div class="team-card">
+        <div class="team-card-img">
+          <img src="https://static.wixstatic.com/media/06731e_6a487db9f32649a2a56cb3afd55ac436~mv2.jpg"
+               alt="Brian Jones">
+        </div>
+        <div class="team-card-body">
+          <p class="team-card-num">01</p>
+          <p class="team-card-name">Brian Jones</p>
+          <p class="team-card-role">Owner</p>
+        </div>
+      </div>
+
+      <!-- Gary Jones -->
+      <div class="team-card">
+        <div class="team-card-img">
+          <img src="https://static.wixstatic.com/media/06731e_160d7c34a4114bdf9b37fde40800c0b5~mv2.jpg"
+               alt="Gary Jones">
+        </div>
+        <div class="team-card-body">
+          <p class="team-card-num">02</p>
+          <p class="team-card-name">Gary Jones</p>
+          <p class="team-card-role">Owner</p>
+        </div>
+      </div>
+
+      <!-- Drew Vargas -->
+      <div class="team-card">
+        <div class="team-card-img">
+          <img src="https://static.wixstatic.com/media/06731e_d93c696b1b2b406dbd41d05ce1f1e7b7~mv2.jpg"
+               alt="Drew Vargas">
+        </div>
+        <div class="team-card-body">
+          <p class="team-card-num">03</p>
+          <p class="team-card-name">Drew Vargas</p>
+          <p class="team-card-role">Marketing Manager</p>
+        </div>
+      </div>
+
+      <!-- Faysal Jones -->
+      <div class="team-card">
+        <div class="team-card-img">
+          <img src="https://static.wixstatic.com/media/06731e_2f07e4796fac41ccbd6cc27745fab286~mv2.jpg"
+               alt="Faysal Jones">
+        </div>
+        <div class="team-card-body">
+          <p class="team-card-num">04</p>
+          <p class="team-card-name">Faysal Jones</p>
+          <p class="team-card-role">Outside Sales</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA strip -->
+    <div class="reveal" style="margin-top:4rem; border:1px solid var(--border); padding:2.5rem 2.75rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; background:var(--surface);">
+      <div>
+        <p class="eyebrow" style="margin-bottom:0.5rem;">— Work With Us —</p>
+        <h3 style="font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.03em; color:var(--cream); line-height:1;">GOT A PROJECT IN MIND?</h3>
+      </div>
+      <a href="index.html#contact" class="btn-primary">Get in Touch →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer style="background:var(--bg); border-top:2px solid var(--rust-dim); padding:3rem 0;">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+    <div class="footer-row" style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:2.5rem; padding-bottom:2rem; border-bottom:1px solid var(--border);">
+
+      <div>
+        <img src="https://static.wixstatic.com/media/06731e_df59151404f048f9ab4a499907724679~mv2.png/v1/crop/x_20,y_0,w_1230,h_256/fill/w_320,h_67,al_c,q_85,enc_avif,quality_auto/black%20actul_edited.png"
+             alt="Repliclassics"
+             style="height:32px; width:auto; filter:brightness(0) invert(0.8) sepia(0.4) saturate(1.2); display:block; margin-bottom:0.75rem;">
+        <p style="font-family:'Special Elite',monospace; font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-dim);">LLC · Bowling Green, Kentucky</p>
+      </div>
+
+      <div style="display:flex; gap:2.5rem; flex-wrap:wrap;">
+        <a href="index.html#work"     style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">Our Work</a>
+        <a href="index.html#about"    style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">About</a>
+        <a href="index.html#services" style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">Services</a>
+        <a href="index.html#contact"  style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">Contact</a>
+        <a href="team.html"           style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--cream); text-decoration:none;">Team</a>
+      </div>
+
+      <div style="display:flex; gap:0.75rem; align-items:center;">
+        <a href="#" aria-label="Facebook"
+           style="width:38px; height:38px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s, background 0.2s;"
+           onmouseover="this.style.borderColor='var(--rust)'; this.style.background='rgba(155,24,24,0.1)'"
+           onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#9B1818"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram"
+           style="width:38px; height:38px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s, background 0.2s;"
+           onmouseover="this.style.borderColor='var(--rust)'; this.style.background='rgba(155,24,24,0.1)'"
+           onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9B1818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div style="padding-top:1.75rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; align-items:center;">
+      <p style="font-family:'Special Elite',monospace; font-size:0.72rem; letter-spacing:0.1em; color:rgba(216,201,152,0.5);">© 2025 Repliclassics LLC. All rights reserved.</p>
+      <p style="font-family:'Special Elite',monospace; font-size:0.6rem; letter-spacing:0.1em; color:rgba(122,110,80,0.4);">1500 Louisville Road · Bowling Green, KY 42101 · (270) 770-3030</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // Scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Trigger above-fold reveals
+  setTimeout(() => {
+    document.querySelectorAll('.page-hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('in'), 100 + i * 120);
+    });
+  }, 80);
+
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobile-nav');
+  hamburger.addEventListener('click', function() {
+    const isOpen = this.classList.toggle('open');
+    mobileNav.classList.toggle('open', isOpen);
+    mobileNav.setAttribute('aria-hidden', String(!isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  document.querySelectorAll('#mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+      mobileNav.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+</body>
+</html>

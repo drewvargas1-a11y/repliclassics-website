@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repliclassics LLC — Classic Truck Restoration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Barlow:ital,wght@0,300;0,400;0,500;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #110E09;
+      --surface:   #1A1510;
+      --raised:    #221C13;
+      --rust:      #9B1818;
+      --rust-lit:  #B82020;
+      --rust-dim:  #6B1010;
+      --cream:     #D8C998;
+      --cream-dim: #8A7A58;
+      --cream-faint: rgba(216,201,152,0.08);
+      --text:      #D8C998;
+      --text-dim:  #7A6E50;
+      --border:    rgba(216,201,152,0.14);
+      --border-rust: rgba(155,24,24,0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── TEXTURE OVERLAYS ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9997;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    /* ── TYPE ── */
+    .display    { font-family: 'Bebas Neue', 'Impact', sans-serif; letter-spacing: 0.03em; line-height: 0.95; }
+    .stamp      { font-family: 'Special Elite', 'Courier New', monospace; }
+    .condensed  { font-family: 'Barlow Condensed', sans-serif; }
+
+    /* ── NAV ── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.5rem 3rem;
+      transition: background 0.4s, padding 0.35s;
+    }
+    #navbar.scrolled {
+      background: rgba(17, 14, 9, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 3rem;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1340px; margin: 0 auto; }
+
+    .nav-logo-wrap { display: flex; align-items: center; gap: 1.25rem; text-decoration: none; }
+    .nav-logo-img  { height: 40px; width: auto; filter: brightness(0) invert(0.85) sepia(0.4) saturate(1.2); }
+    .nav-logo-badge {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.72rem;
+      color: var(--rust-lit);
+      border: 1px solid var(--border-rust);
+      padding: 3px 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-links { display: flex; gap: 3rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(216,201,152,0.72);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+
+    .btn-nav {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none;
+      color: var(--bg);
+      background: var(--rust);
+      padding: 0.75rem 1.85rem;
+      border: none; cursor: pointer;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-nav:hover { background: var(--rust-lit); transform: translateY(-1px); }
+    .btn-nav:active { transform: translateY(0); background: var(--rust-dim); }
+
+    /* ── HERO ── */
+    .hero {
+      height: 100vh; min-height: 700px;
+      position: relative; display: flex; align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero-bg { position: absolute; inset: 0; }
+    .hero-bg video { width: 100%; height: 100%; object-fit: cover; }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to right, rgba(17,14,9,0.96) 0%, rgba(17,14,9,0.6) 50%, rgba(17,14,9,0.2) 100%),
+        linear-gradient(to top, rgba(17,14,9,1) 0%, rgba(17,14,9,0) 45%);
+    }
+
+    /* diagonal rust stripe */
+    .hero-stripe {
+      position: absolute; top: 0; right: 0;
+      width: 280px; height: 100%;
+      background: var(--rust);
+      opacity: 0.06;
+      clip-path: polygon(60% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+
+    .hero-content {
+      position: relative; z-index: 10;
+      max-width: 1340px; margin: 0 auto;
+      padding: 0 3rem 6rem; width: 100%;
+    }
+
+    .hero-year {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.85rem;
+      color: #C41C1C;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+    }
+    .hero-year::before {
+      content: '';
+      display: block; width: 2rem; height: 1px;
+      background: var(--rust);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 12vw, 11rem);
+      line-height: 0.88;
+      letter-spacing: 0.02em;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.7), 0 4px 40px rgba(0,0,0,0.5);
+    }
+    .hero-title span { color: var(--rust); }
+
+    .hero-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.75rem);
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(216,201,152,0.75);
+      margin-bottom: 2.5rem;
+      text-shadow: 0 1px 12px rgba(0,0,0,0.8);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem; font-weight: 400; line-height: 1.8;
+      color: rgba(216,201,152,0.82);
+      max-width: 440px; margin-bottom: 2.5rem;
+      font-family: 'Barlow', sans-serif;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.9);
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+
+    .btn-primary {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      text-decoration: none; color: var(--bg);
+      background: var(--rust);
+      padding: 0.9rem 2.25rem;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--rust-lit); transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); background: var(--rust-dim); }
+
+    .btn-outline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      text-decoration: none; color: var(--cream);
+      border: 1px solid rgba(216,201,152,0.3);
+      padding: 0.9rem 2.25rem;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      border-color: var(--cream); background: rgba(216,201,152,0.06);
+      transform: translateY(-2px);
+    }
+    .btn-outline:active { transform: translateY(0); }
+
+    /* ── DIVIDER STRIP ── */
+    .ticker-strip {
+      background: var(--rust); padding: 0.85rem 0;
+      overflow: hidden; white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--cream);
+      padding: 0 2.5rem;
+    }
+    .ticker-dot { opacity: 0.4; color: var(--cream); }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SECTION ANATOMY ── */
+    .eyebrow {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.82rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: #C41C1C;
+      margin-bottom: 0.5rem;
+    }
+    .rule-rust {
+      width: 3rem; height: 2px;
+      background: var(--rust);
+      margin-bottom: 1.5rem;
+    }
+    .section-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 0.92; letter-spacing: 0.03em;
+      color: var(--cream);
+    }
+    .body-copy {
+      font-size: 1rem; font-weight: 400;
+      line-height: 1.85; color: rgba(216,201,152,0.8);
+    }
+
+    /* ── GALLERY ── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 3px;
+      background: #0A0806;
+    }
+    .g-cell {
+      position: relative; overflow: hidden;
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .g-cell img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s ease;
+      filter: sepia(0.25) contrast(1.05);
+    }
+    .g-cell:hover img { transform: scale(1.06); filter: sepia(0.1) contrast(1.1); }
+
+    /* film grain on each photo */
+    .g-cell::after {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(17,14,9,0.75) 0%, rgba(17,14,9,0) 55%);
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    .g-cell:hover::after { opacity: 0.7; }
+
+    .g-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.25rem 1.5rem; z-index: 2;
+      transform: translateY(4px); opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .g-cell:hover .g-caption { opacity: 1; transform: translateY(0); }
+    .g-cap-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 0.05em;
+      color: var(--cream); line-height: 1;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+    }
+    .g-cap-tag {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.75rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #C41C1C;
+      margin-top: 5px;
+    }
+
+    /* ── ABOUT ── */
+    .pull-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      line-height: 0.9; letter-spacing: 0.03em;
+      color: var(--rust); opacity: 0.15;
+      position: absolute; top: -1.5rem; left: -1rem;
+      pointer-events: none;
+    }
+
+    /* ── STAT ── */
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem; line-height: 1; letter-spacing: 0.03em;
+      color: var(--rust);
+    }
+    .stat-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(216,201,152,0.65);
+      margin-top: 0.25rem;
+    }
+
+    /* ── SERVICES / PARTS LIST ── */
+    .parts-row {
+      display: grid; grid-template-columns: 3rem 1fr auto;
+      align-items: start; gap: 1.5rem;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .parts-row:first-child { border-top: 1px solid var(--border); }
+    .parts-row:hover { background: var(--cream-faint); }
+    .parts-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; color: var(--rust);
+      line-height: 1; padding-top: 2px;
+    }
+    .parts-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.2rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--cream); margin-bottom: 0.4rem;
+    }
+    .parts-desc { font-size: 0.95rem; font-weight: 400; line-height: 1.75; color: rgba(216,201,152,0.72); }
+    .parts-badge {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #C41C1C;
+      border: 1px solid rgba(196,28,28,0.5);
+      padding: 4px 12px; white-space: nowrap; align-self: center;
+    }
+
+    /* ── CONTACT ── */
+    .f-label {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.75rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #C41C1C;
+      display: block; margin-bottom: 0.4rem;
+    }
+    .f-input {
+      width: 100%; background: var(--raised);
+      border: 1px solid var(--border);
+      border-bottom: 2px solid rgba(155,24,24,0.3);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.9rem; font-weight: 300;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .f-input::placeholder { color: rgba(216,201,152,0.38); font-style: italic; }
+    .f-input:focus { border-color: rgba(216,201,152,0.25); border-bottom-color: var(--rust); background: var(--surface); }
+    select.f-input option { background: var(--raised); }
+
+    /* ── INFO BLOCK ── */
+    .info-item { display: flex; gap: 1.25rem; }
+    .info-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem; color: var(--rust); line-height: 1;
+      flex-shrink: 0; padding-top: 2px;
+    }
+    .info-lbl {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.75rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #C41C1C;
+      margin-bottom: 0.3rem;
+    }
+    .info-val { font-size: 1rem; font-weight: 400; line-height: 1.65; color: var(--cream); }
+
+    /* ── FOOTER ── */
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem; letter-spacing: 0.04em;
+      color: var(--cream); line-height: 1;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.22s; }
+    .d3 { transition-delay: 0.34s; }
+    .d4 { transition-delay: 0.48s; }
+
+    /* ── WORN BORDER UTILITY ── */
+    .worn-border { border: 1px solid var(--border); outline: 3px solid transparent; outline-offset: -8px; }
+
+    /* ── DIAGONAL CUT ── */
+    .cut-top    { clip-path: polygon(0 3%, 100% 0%, 100% 100%, 0% 100%); margin-top: -2px; }
+    .cut-bottom { clip-path: polygon(0 0%, 100% 0%, 100% 97%, 0% 100%); margin-bottom: -2px; }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none; flex-direction: column; justify-content: center;
+      gap: 6px; cursor: pointer; padding: 6px;
+      background: none; border: none; z-index: 1001;
+    }
+    .hamburger span {
+      display: block; width: 26px; height: 2px; background: var(--cream);
+      transition: transform 0.3s ease, opacity 0.2s ease;
+      transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── MOBILE NAV DRAWER ── */
+    #mobile-nav {
+      display: none; position: fixed; inset: 0;
+      background: #0D0A06; z-index: 998;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 0; padding: 2rem;
+    }
+    #mobile-nav.open { display: flex; }
+    .mobile-nav-link {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.75rem;
+      letter-spacing: 0.06em; color: rgba(216,201,152,0.65);
+      text-decoration: none; padding: 0.5rem 0;
+      transition: color 0.2s; display: block; text-align: center;
+    }
+    .mobile-nav-link:hover, .mobile-nav-link:active { color: var(--cream); }
+    .mobile-nav-rule { width: 2rem; height: 1px; background: rgba(155,24,24,0.4); margin: 0.4rem auto; }
+    .mobile-nav-shop { margin-top: 2rem; }
+
+    /* ── TABLET ── */
+    @media (max-width: 1024px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none !important; }
+      .btn-nav { display: none; }
+      .nav-logo-badge { display: none; }
+      #navbar { padding: 1.1rem 1.5rem; }
+      #navbar.scrolled { padding: 0.9rem 1.5rem; }
+      .hero-content { padding: 0 1.5rem 5rem !important; }
+      .gallery-grid { grid-template-columns: repeat(4, 1fr) !important; }
+      .g-cell { grid-column: span 2 !important; height: 280px !important; }
+      #about-grid, #contact-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
+      #services-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+      #services-grid > div:first-child { position: static !important; }
+      #shopGrid { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      #navbar { padding: 1rem 1.25rem; }
+      #navbar.scrolled { padding: 0.85rem 1.25rem; }
+
+      .hero { min-height: 100svh; align-items: center !important; }
+      .hero-content { padding: 0 1.5rem !important; text-align: center; }
+      .hero-year { justify-content: center; }
+      .hero-year::before { display: none; }
+      .hero-title { font-size: clamp(3.5rem, 16vw, 5rem) !important; }
+      .hero-sub { font-size: 1rem !important; letter-spacing: 0.14em !important; }
+      .hero-desc { font-size: 0.95rem !important; max-width: 100% !important; margin-left: auto; margin-right: auto; }
+      .hero-actions { flex-direction: column; gap: 0.75rem; align-items: center; }
+      .hero-actions a, .hero-actions .btn-primary, .hero-actions .btn-outline { display: block; text-align: center; width: 100%; max-width: 320px; }
+      .hero-scroll-cue { display: none !important; }
+
+      .section-heading { font-size: clamp(2.2rem, 10vw, 3rem) !important; }
+
+      .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .g-cell { grid-column: span 1 !important; height: 200px !important; }
+
+      #about-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+      #about-grid > div:first-child { order: 2; }
+      #about-grid > div:last-child  { order: 1; }
+      #stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
+      .stat-num { font-size: 2.25rem !important; }
+      .stat-label { font-size: 0.65rem !important; }
+
+      #services-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+      #services-grid > div:first-child { position: static !important; top: auto !important; }
+      .parts-badge { display: none; }
+      .parts-row { grid-template-columns: 2.5rem 1fr !important; gap: 1rem !important; padding: 1.25rem 0 !important; }
+
+      #shopGrid { grid-template-columns: repeat(2, 1fr) !important; }
+      .shop-card-title { font-size: 0.8rem !important; }
+
+      #contact-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+      #form-name-row { grid-template-columns: 1fr !important; }
+
+      #work     { padding: 3.5rem 0 0 !important; }
+      #about    { padding: 3.5rem 0 !important; }
+      #services { padding: 3.5rem 0 !important; }
+      #shop     { padding: 3.5rem 0 !important; }
+      #contact  { padding: 3.5rem 0 !important; }
+      #partners { padding: 2rem 0 !important; }
+
+      #work > div, #about > div, #services > div,
+      #shop > div, #contact > div, #partners > div,
+      footer > div { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+      .gallery-grid { padding: 0 !important; }
+
+      .footer-row { flex-direction: column !important; gap: 1.5rem !important; align-items: flex-start !important; }
+      .footer-bottom { flex-direction: column !important; gap: 0.5rem !important; align-items: flex-start !important; }
+      .footer-social { flex-direction: row !important; }
+
+      #partners > div { flex-direction: column !important; align-items: flex-start !important; gap: 1.5rem !important; }
+      .partner-names { gap: 1.25rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo-wrap" href="#">
+      <img class="nav-logo-img"
+           src="https://static.wixstatic.com/media/06731e_df59151404f048f9ab4a499907724679~mv2.png/v1/crop/x_20,y_0,w_1230,h_256/fill/w_320,h_67,al_c,q_85,enc_avif,quality_auto/black%20actul_edited.png"
+           alt="Repliclassics">
+      <span class="nav-logo-badge">Est. Bowling Green, KY</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#work">Our Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#shop">Parts Shop</a></li>
+      <li><a href="#partners">Partners</a></li>
+      <li><a href="team.html">Team</a></li>
+    </ul>
+
+    <a href="#" class="btn-nav">Shop Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobile-nav" aria-hidden="true">
+  <a href="#work" class="mobile-nav-link">Our Work</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="#about" class="mobile-nav-link">About</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="#services" class="mobile-nav-link">Services</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="#shop" class="mobile-nav-link">Parts Shop</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="#contact" class="mobile-nav-link">Contact</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="#partners" class="mobile-nav-link">Partners</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="team.html" class="mobile-nav-link">Team</a>
+  <div class="mobile-nav-shop">
+    <a href="https://repliclassics.myshopify.com" target="_blank" style="font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#0D0A06; background:#9B1818; padding:0.9rem 2.5rem; display:inline-block; clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); text-decoration:none;">Shop Now</a>
+  </div>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-bg">
+    <video autoplay muted loop playsinline
+           style="width:100%; height:100%; object-fit:cover; filter:sepia(0.2) contrast(1.08);">
+      <source src="https://pub-4ad92f8417df4ba49c93cae57d957b65.r2.dev/hero.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-stripe"></div>
+
+  <!-- worn corner stamp -->
+  <div style="position:absolute; top:6rem; right:3rem; z-index:10; text-align:center; border:2px solid rgba(155,24,24,0.5); padding:0.75rem 1rem; transform:rotate(2deg);">
+    <p style="font-family:'Special Elite',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--rust-lit);">Since</p>
+    <p style="font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--rust); line-height:1; letter-spacing:0.05em;">2024</p>
+    <p style="font-family:'Special Elite',monospace; font-size:0.5rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--rust-lit);">Bowling Green</p>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-year reveal">Classic Vehicle Restoration · 1967–1972 Chevy</p>
+    <h1 class="hero-title reveal d1">
+      REPLI<span>CLASSICS</span>
+    </h1>
+    <p class="hero-sub reveal d2">LLC · Bowling Green, Kentucky</p>
+    <p class="hero-desc reveal d3">
+      Frame-off restorations of 1967–1972 Chevrolet trucks and Blazers. Every build leaves our shop the way it should've left the factory — only better.
+    </p>
+    <div class="hero-actions reveal d4">
+      <a href="#work" class="btn-primary">View Our Work</a>
+      <a href="#contact" class="btn-outline">Start a Build</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll-cue" style="position:absolute; bottom:2.5rem; left:3rem; display:flex; align-items:center; gap:0.75rem; opacity:0.35; z-index:10;">
+    <div style="width:52px; height:1px; background:var(--rust);"></div>
+    <span style="font-family:'Special Elite',monospace; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--cream);">Scroll Down</span>
+  </div>
+</section>
+
+<!-- ═══════════════ TICKER ═══════════════ -->
+<div class="ticker-strip">
+  <div class="ticker-inner">
+    <span class="ticker-item">Vehicle Restoration</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Custom Fabrication</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Paint &amp; Body</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Parts Division</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">1967–1972 Chevy Trucks &amp; Blazers</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Bowling Green, KY</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Vehicle Restoration</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Custom Fabrication</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Paint &amp; Body</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Parts Division</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">1967–1972 Chevy Trucks &amp; Blazers</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Bowling Green, KY</span><span class="ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- ═══════════════ OUR WORK ═══════════════ -->
+<section id="work" style="padding: 6rem 0 0;">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:2rem; margin-bottom:3rem;">
+      <div class="reveal">
+        <p class="eyebrow">— Portfolio —</p>
+        <div class="rule-rust"></div>
+        <h2 class="section-heading">OUR WORK</h2>
+      </div>
+      <div class="reveal d1" style="max-width:380px;">
+        <p class="body-copy">A collection of completed restorations — each one brought back to life with proper craft and zero shortcuts.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="gallery-grid" style="padding:0 3px;">
+    <!-- Row 1 -->
+    <div class="g-cell reveal" style="grid-column:span 5; height:440px;">
+      <img src="https://static.wixstatic.com/media/06731e_094039be876a4fbdadf245242e6b871f~mv2.jpg/v1/fill/w_900,h_600,al_c,q_85,enc_avif,quality_auto/06731e_094039be876a4fbdadf245242e6b871f~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">1969 K5 Blazer</p><p class="g-cap-tag">Full Frame-Off Restoration</p></div>
+    </div>
+    <div class="g-cell reveal d1" style="grid-column:span 4; height:440px;">
+      <img src="https://static.wixstatic.com/media/06731e_f2e963f7c5894c5f8b7ceae12302db43~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85,enc_avif,quality_auto/06731e_f2e963f7c5894c5f8b7ceae12302db43~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">1967 C10 Stepside</p><p class="g-cap-tag">Custom Build</p></div>
+    </div>
+    <div class="g-cell reveal d2" style="grid-column:span 3; height:440px;">
+      <img src="https://static.wixstatic.com/media/06731e_12c0d7c7269b43e294ec6935de3d10c5~mv2.jpg/v1/fill/w_600,h_700,al_c,q_85,enc_avif,quality_auto/06731e_12c0d7c7269b43e294ec6935de3d10c5~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">1972 K5 Blazer</p><p class="g-cap-tag">Resto-Mod</p></div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="g-cell reveal d1" style="grid-column:span 3; height:370px;">
+      <img src="https://static.wixstatic.com/media/06731e_f3d91005ce154d4ab4ae4b64ce68d9f7~mv2.jpg/v1/fill/w_600,h_500,al_c,q_85,enc_avif,quality_auto/06731e_f3d91005ce154d4ab4ae4b64ce68d9f7~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">1970 C10</p><p class="g-cap-tag">Frame Off</p></div>
+    </div>
+    <div class="g-cell reveal d2" style="grid-column:span 6; height:370px;">
+      <img src="https://static.wixstatic.com/media/06731e_afb461a3e92d49209131ec6d1fe5652a~mv2.jpg/v1/fill/w_1100,h_500,al_c,q_85,enc_avif,quality_auto/06731e_afb461a3e92d49209131ec6d1fe5652a~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">1968 K5 Blazer</p><p class="g-cap-tag">Custom Tub · Paint &amp; Fab</p></div>
+    </div>
+    <div class="g-cell reveal d3" style="grid-column:span 3; height:370px;">
+      <img src="https://static.wixstatic.com/media/06731e_cf58e4974a6145a0af380c8f31525b46~mv2.jpg/v1/fill/w_600,h_500,al_c,q_85,enc_avif,quality_auto/06731e_cf58e4974a6145a0af380c8f31525b46~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">1971 C10 LWB</p><p class="g-cap-tag">Paint &amp; Fabrication</p></div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="g-cell reveal" style="grid-column:span 4; height:360px;">
+      <img src="https://static.wixstatic.com/media/06731e_d071ac65cca240b79ec2407c7a2ff3f9~mv2.jpg/v1/fill/w_700,h_480,al_c,q_85,enc_avif,quality_auto/06731e_d071ac65cca240b79ec2407c7a2ff3f9~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">Custom Build</p><p class="g-cap-tag">Full Restoration</p></div>
+    </div>
+    <div class="g-cell reveal d1" style="grid-column:span 4; height:360px;">
+      <img src="https://static.wixstatic.com/media/06731e_da33394299dc4043a4512dba778b7db7~mv2.jpg/v1/fill/w_700,h_480,al_c,q_85,enc_avif,quality_auto/06731e_da33394299dc4043a4512dba778b7db7~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">Blazer Build</p><p class="g-cap-tag">Custom Tub · Paint &amp; Body</p></div>
+    </div>
+    <div class="g-cell reveal d2" style="grid-column:span 4; height:360px;">
+      <img src="https://static.wixstatic.com/media/06731e_b3fd894b89ef4671b68f55d24d73807f~mv2.jpg/v1/fill/w_700,h_600,al_c,q_85,enc_avif,quality_auto/06731e_b3fd894b89ef4671b68f55d24d73807f~mv2.jpg" alt="Restoration">
+      <div class="g-caption"><p class="g-cap-title">C10 Project</p><p class="g-cap-tag">Fabrication · Custom Paint</p></div>
+    </div>
+  </div>
+
+  <div style="padding:3rem 3rem 0; text-align:center;" class="reveal">
+    <a href="#" class="btn-outline">View Full Portfolio</a>
+  </div>
+</section>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section id="about" style="background:var(--surface); padding:6rem 0; margin-top:6rem;">
+  <div id="about-grid" style="max-width:1340px; margin:0 auto; padding:0 3rem; display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start;">
+
+    <!-- Image side -->
+    <div class="reveal" style="position:relative;">
+      <!-- worn double-border frame -->
+      <div style="position:absolute; inset:-10px; border:1px solid var(--border); z-index:0; pointer-events:none;"></div>
+      <div style="position:absolute; inset:-4px; border:1px solid rgba(155,24,24,0.2); z-index:0; pointer-events:none;"></div>
+      <div style="position:relative; z-index:1;">
+        <img src="https://static.wixstatic.com/media/06731e_cdc8f86e105f4f13ab7d658f92eef2e1~mv2.jpg/v1/fill/w_800,h_700,al_c,q_85,enc_avif,quality_auto/06731e_cdc8f86e105f4f13ab7d658f92eef2e1~mv2.jpg"
+             alt="Repliclassics build"
+             style="width:100%; display:block; object-fit:cover; filter:sepia(0.2) contrast(1.08);">
+        <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(17,14,9,0.75) 0%, rgba(17,14,9,0) 55%);"></div>
+        <div style="position:absolute; bottom:0; left:0; right:0; padding:1.75rem 2rem; z-index:2;">
+          <p style="font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:0.05em; color:var(--cream); line-height:1;">Brian &amp; Gary Jones</p>
+          <p style="font-family:'Special Elite',monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--rust-lit); margin-top:5px;">Founders · Bowling Green, KY</p>
+        </div>
+      </div>
+      <!-- corner stamp -->
+      <div style="position:absolute; top:1.25rem; right:1.25rem; z-index:3; border:2px solid rgba(155,24,24,0.6); padding:0.5rem 0.75rem; transform:rotate(-1.5deg); background:rgba(17,14,9,0.85);">
+        <p style="font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--rust); letter-spacing:0.05em; line-height:1;">LLC</p>
+        <p style="font-family:'Special Elite',monospace; font-size:0.5rem; letter-spacing:0.1em; color:var(--cream-dim);">Bowling Green</p>
+      </div>
+    </div>
+
+    <!-- Text side -->
+    <div>
+      <p class="eyebrow reveal">— Our Story —</p>
+      <div class="rule-rust reveal"></div>
+      <h2 class="section-heading reveal" style="margin-bottom:1.5rem;">BUILT BY<br>BROTHERS</h2>
+      <p class="body-copy reveal d1" style="margin-bottom:1.25rem;">
+        Repliclassics was founded by brothers Brian and Gary Jones out of Bowling Green, Kentucky. Gary brings a lifetime of expertise in fabrication and paint. Brian handles the business. Together they built a shop that doesn't cut corners.
+      </p>
+      <p class="body-copy reveal d2" style="margin-bottom:2.5rem;">
+        Their focus is the 1967–1972 Chevrolet truck and Blazer — a specific era they know inside out. From the custom tubs they fabricate for 1969–72 Blazers to the full frame-off restorations, every vehicle gets the same treatment.
+      </p>
+
+      <div id="stats-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border:1px solid var(--border); margin-bottom:2.5rem;" class="reveal d2">
+        <div style="padding:1.5rem; border-right:1px solid var(--border);">
+          <p class="stat-num">1967</p>
+          <p class="stat-label">Earliest Year</p>
+        </div>
+        <div style="padding:1.5rem; border-right:1px solid var(--border);">
+          <p class="stat-num">1972</p>
+          <p class="stat-label">Latest Year</p>
+        </div>
+        <div style="padding:1.5rem;">
+          <p class="stat-num">100%</p>
+          <p class="stat-label">Custom Built</p>
+        </div>
+      </div>
+
+      <a href="#contact" class="btn-primary reveal d3">Get a Quote →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SERVICES ═══════════════ -->
+<section id="services" style="padding:6rem 0;">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+
+    <div id="services-grid" style="display:grid; grid-template-columns:1fr 2fr; gap:5rem; align-items:start;">
+      <div style="position:sticky; top:7rem;">
+        <p class="eyebrow reveal">— What We Do —</p>
+        <div class="rule-rust reveal"></div>
+        <h2 class="section-heading reveal" style="margin-bottom:1rem;">SPECIAL&shy;IZA&shy;TIONS</h2>
+        <p class="body-copy reveal d1">We do one thing and we do it right — classic Chevy trucks and Blazers, restored the way they deserve.</p>
+      </div>
+
+      <div>
+        <div class="parts-row reveal">
+          <p class="parts-num">01</p>
+          <div>
+            <p class="parts-title">Vehicle Restoration</p>
+            <p class="parts-desc">Full frame-off restorations of 1967–1972 Chevrolet trucks and Blazers. Returned to factory spec or built beyond it.</p>
+          </div>
+          <span class="parts-badge">Frame Off</span>
+        </div>
+        <div class="parts-row reveal d1">
+          <p class="parts-num">02</p>
+          <div>
+            <p class="parts-title">Fabrication &amp; Paint</p>
+            <p class="parts-desc">Expert metalwork and custom paint by Gary Jones. From rust repair and panel work to complete custom bodywork and finishes.</p>
+          </div>
+          <span class="parts-badge">In-House</span>
+        </div>
+        <div class="parts-row reveal d2">
+          <p class="parts-num">03</p>
+          <div>
+            <p class="parts-title">Custom Tubs</p>
+            <p class="parts-desc">Custom-fabricated tubs for 1969–1972 Blazers. Engineered for precise fitment, finished to your exact specification.</p>
+          </div>
+          <span class="parts-badge">1969–72</span>
+        </div>
+        <div class="parts-row reveal d3">
+          <p class="parts-num">04</p>
+          <div>
+            <p class="parts-title">Custom Cabs</p>
+            <p class="parts-desc">Fabricated cabs for 1967–1972 Chevrolet trucks. Built right, every time.</p>
+          </div>
+          <span class="parts-badge">1967–72</span>
+        </div>
+        <div class="parts-row reveal d4">
+          <p class="parts-num">05</p>
+          <div>
+            <p class="parts-title">Parts Division</p>
+            <p class="parts-desc">Sourced and manufactured parts for the 1967–72 platform. Quality components for builders and restorers nationwide.</p>
+          </div>
+          <span class="parts-badge">Ships Nationwide</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SHOP ═══════════════ -->
+<section id="shop" style="padding:6rem 0; background:var(--bg);">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:2rem; margin-bottom:3rem;">
+      <div class="reveal">
+        <p class="eyebrow">— Parts Division —</p>
+        <div class="rule-rust"></div>
+        <h2 class="section-heading">THE PARTS<br>COUNTER</h2>
+      </div>
+      <div class="reveal d1" style="text-align:right;">
+        <p class="body-copy" style="max-width:340px; margin-bottom:1rem;">Replacement and restoration parts for 1967–1991 Chevy trucks. Ships nationwide.</p>
+        <a href="https://repliclassics.myshopify.com" target="_blank" class="btn-outline" style="font-size:0.72rem;">Browse Full Store →</a>
+      </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:3rem; border-bottom:1px solid var(--border); padding-bottom:1.5rem;" class="reveal">
+      <button class="shop-filter active" data-cat="all">All Parts</button>
+      <button class="shop-filter" data-cat="glass">Glass</button>
+      <button class="shop-filter" data-cat="body">Body Panels</button>
+      <button class="shop-filter" data-cat="trim">Trim & Seals</button>
+      <button class="shop-filter" data-cat="featured">Featured</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="shopGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(216,201,152,0.06);">
+    </div>
+
+    <!-- Show More -->
+    <div id="shopShowMore" style="display:none; justify-content:center; align-items:center; gap:2rem; margin-top:3rem; flex-direction:column;">
+      <div style="width:3rem; height:1px; background:var(--border);"></div>
+      <button id="shopShowMoreBtn" class="btn-outline" style="font-size:0.78rem; cursor:pointer; border:none; font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--cream); border:1px solid rgba(216,201,152,0.3); padding:0.9rem 2.25rem; background:none; transition:border-color 0.2s, background 0.2s, transform 0.2s;">
+        Show All Parts →
+      </button>
+      <div style="width:3rem; height:1px; background:var(--border);"></div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .shop-filter {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    background: none; border: 1px solid var(--border);
+    color: rgba(216,201,152,0.5);
+    padding: 0.5rem 1.25rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .shop-filter:hover, .shop-filter.active {
+    border-color: var(--rust);
+    color: var(--cream);
+    background: rgba(155,24,24,0.12);
+  }
+  .shop-card {
+    background: var(--surface);
+    display: flex; flex-direction: column;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .shop-card:hover { background: var(--raised); }
+  .shop-card-img {
+    position: relative; overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--raised);
+  }
+  .shop-card-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: sepia(0.3) contrast(1.05);
+    transition: transform 0.6s ease, filter 0.4s ease;
+  }
+  .shop-card:hover .shop-card-img img { transform: scale(1.05); filter: sepia(0.1) contrast(1.1); }
+  .shop-card-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(17,14,9,0.6) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .shop-card-body { padding: 1.25rem 1.25rem 1.5rem; flex:1; display:flex; flex-direction:column; }
+  .shop-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--cream); line-height: 1.3;
+    margin-bottom: 0.6rem; flex:1;
+  }
+  .shop-card-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; letter-spacing: 0.04em;
+    color: var(--rust); line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .shop-card-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    text-decoration: none; color: var(--bg);
+    background: var(--rust);
+    padding: 0.6rem 1rem;
+    display: block; text-align: center;
+    clip-path: polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+    transition: background 0.2s;
+  }
+  .shop-card-btn:hover { background: var(--rust-lit); }
+  .shop-card.hidden { display: none; }
+</style>
+
+<script>
+(function() {
+  const SHOPIFY_URL = 'https://repliclassics.myshopify.com';
+
+  function categorize(title) {
+    const t = title.toLowerCase();
+    const cats = [];
+    if (/glass|windshield|window/.test(t)) cats.push('glass');
+    if (/fender|hood|door shell|roof|rocker|bedside|tailgate|tub|radiator|floor|cowl|cab|quarter panel|firewall|dash|splash|bed panel|fuel door|cargo/.test(t)) cats.push('body');
+    if (/trim|seal|hardware|channel|bow|pillar|gasket|weatherstrip|weather strip/.test(t)) cats.push('trim');
+    if (cats.length === 0) cats.push('body');
+    return cats.join(' ');
+  }
+
+  function formatPrice(variants) {
+    const prices = variants.map(v => parseFloat(v.price));
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    const fmt = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return min === max ? fmt(min) : fmt(min) + '+';
+  }
+
+  const PREVIEW_COUNT = 8;
+  let expanded = false;
+
+  function cardHTML(p) {
+    return `
+      <div class="shop-card">
+        <div class="shop-card-img">
+          <img src="${p.img}" alt="${p.title}" loading="lazy">
+        </div>
+        <div class="shop-card-body">
+          <p class="shop-card-title">${p.title}</p>
+          <p class="shop-card-price">${p.price}</p>
+          <a href="${SHOPIFY_URL}/products/${p.handle}" target="_blank" class="shop-card-btn">Buy Now</a>
+        </div>
+      </div>`;
+  }
+
+  function renderCards(products, cat) {
+    const grid = document.getElementById('shopGrid');
+    const showMoreWrap = document.getElementById('shopShowMore');
+    const filtered = cat === 'all' ? products : products.filter(p => p.cat.includes(cat));
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1; padding:3rem; text-align:center; font-family:\'Special Elite\',monospace; color:var(--text-dim); font-size:0.85rem; letter-spacing:0.1em;">No parts found in this category.</p>';
+      showMoreWrap.style.display = 'none';
+      return;
+    }
+
+    const visible = expanded ? filtered : filtered.slice(0, PREVIEW_COUNT);
+    grid.innerHTML = visible.map(cardHTML).join('');
+
+    const btn = document.getElementById('shopShowMoreBtn');
+    const remaining = filtered.length - PREVIEW_COUNT;
+    if (!expanded && remaining > 0) {
+      showMoreWrap.style.display = 'flex';
+      btn.textContent = `Show All ${filtered.length} Parts →`;
+    } else if (expanded && filtered.length > PREVIEW_COUNT) {
+      showMoreWrap.style.display = 'flex';
+      btn.textContent = '↑ Show Less';
+    } else {
+      showMoreWrap.style.display = 'none';
+    }
+  }
+
+  function showLoading() {
+    document.getElementById('shopGrid').innerHTML =
+      '<p style="grid-column:1/-1; padding:3rem; text-align:center; font-family:\'Special Elite\',monospace; color:var(--text-dim); font-size:0.85rem; letter-spacing:0.12em;">Loading parts catalog...</p>';
+  }
+
+  function showError() {
+    document.getElementById('shopGrid').innerHTML =
+      '<div style="grid-column:1/-1; padding:3rem; text-align:center;">' +
+      '<p style="font-family:\'Special Elite\',monospace; color:var(--rust-lit); font-size:0.85rem; letter-spacing:0.1em; margin-bottom:1rem;">Couldn\'t load the catalog right now.</p>' +
+      '<a href="' + SHOPIFY_URL + '/collections/all" target="_blank" class="btn-outline" style="font-size:0.72rem;">Browse Full Store →</a>' +
+      '</div>';
+  }
+
+  let allProducts = [];
+  let activeCat = 'all';
+
+  showLoading();
+
+  fetch(SHOPIFY_URL + '/products.json?limit=250')
+    .then(r => r.json())
+    .then(data => {
+      allProducts = data.products.map(p => ({
+        title: p.title,
+        handle: p.handle,
+        price: formatPrice(p.variants),
+        img: p.images.length ? p.images[0].src : 'https://placehold.co/400x300/1A1510/B03A18?text=No+Image',
+        cat: categorize(p.title)
+      }));
+
+      // Update filter counts
+      document.querySelectorAll('.shop-filter').forEach(btn => {
+        const cat = btn.dataset.cat;
+        const count = cat === 'all' ? allProducts.length : allProducts.filter(p => p.cat.includes(cat)).length;
+        btn.dataset.count = count;
+        btn.innerHTML = btn.innerHTML.replace(/ \(\d+\)/, '') + (count > 0 ? ` <span style="opacity:0.5;font-weight:400">(${count})</span>` : '');
+      });
+
+      renderCards(allProducts, activeCat);
+    })
+    .catch(showError);
+
+  document.querySelectorAll('.shop-filter').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.shop-filter').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      activeCat = this.dataset.cat;
+      expanded = false;
+      renderCards(allProducts, activeCat);
+    });
+  });
+
+  document.getElementById('shopShowMoreBtn').addEventListener('click', function() {
+    expanded = !expanded;
+    renderCards(allProducts, activeCat);
+    if (!expanded) document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+  });
+
+})();
+</script>
+
+<!-- ═══════════════ PARTNERS ═══════════════ -->
+<div id="partners" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--surface); padding:3rem 0;">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem; display:flex; align-items:center; gap:4rem; flex-wrap:wrap; justify-content:center;">
+    <p style="font-family:'Special Elite',monospace; font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(216,201,152,0.55); flex-shrink:0;">Trusted Partners</p>
+    <div style="flex:1; height:1px; background:var(--border); min-width:1rem;"></div>
+    <div class="partner-names" style="display:flex; gap:3.5rem; flex-wrap:wrap; align-items:center;">
+      <span style="font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:0.08em; color:rgba(216,201,152,0.2);">AutoZone Pro</span>
+      <span style="font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:0.08em; color:rgba(216,201,152,0.2);">Classic Industries</span>
+      <span style="font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:0.08em; color:rgba(216,201,152,0.2);">Speedway Motors</span>
+      <span style="font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:0.08em; color:rgba(216,201,152,0.2);">Year One</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<section id="contact" style="padding:6rem 0; background:var(--surface);">
+  <div id="contact-grid" style="max-width:1340px; margin:0 auto; padding:0 3rem; display:grid; grid-template-columns:1fr 1fr; gap:5rem;">
+
+    <div>
+      <p class="eyebrow reveal">— Get in Touch —</p>
+      <div class="rule-rust reveal"></div>
+      <h2 class="section-heading reveal" style="margin-bottom:1.5rem;">LET'S BUILD<br>SOMETHING<br>RIGHT.</h2>
+      <p class="body-copy reveal d1" style="margin-bottom:3rem;">
+        Got a truck you want brought back to life? Reach out — whether it's a full restoration, a parts order, or just want to talk shop.
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:1.75rem;">
+        <div class="info-item reveal d1">
+          <p class="info-num">01</p>
+          <div>
+            <p class="info-lbl">Location</p>
+            <p class="info-val">1500 Louisville Road<br>Bowling Green, KY 42101</p>
+          </div>
+        </div>
+        <div class="info-item reveal d2">
+          <p class="info-num">02</p>
+          <div>
+            <p class="info-lbl">Phone</p>
+            <p class="info-val">(270) 770-3030</p>
+          </div>
+        </div>
+        <div class="info-item reveal d2">
+          <p class="info-num">03</p>
+          <div>
+            <p class="info-lbl">Email</p>
+            <p class="info-val">info@repliclassics.com</p>
+          </div>
+        </div>
+        <div class="info-item reveal d3">
+          <p class="info-num">04</p>
+          <div>
+            <p class="info-lbl">Shop Hours</p>
+            <p class="info-val">Monday – Friday · 8:00 AM – 4:00 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal d1">
+      <div style="border:1px solid var(--border); padding:2.5rem; background:var(--raised);">
+        <p style="font-family:'Special Elite',monospace; font-size:0.8rem; letter-spacing:0.18em; text-transform:uppercase; color:#C41C1C; margin-bottom:1.75rem; border-bottom:1px solid var(--border); padding-bottom:1rem;">// Inquiry Form</p>
+        <form style="display:flex; flex-direction:column; gap:1.25rem;">
+          <div id="form-name-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div><label class="f-label">First Name</label><input type="text" placeholder="John" class="f-input"></div>
+            <div><label class="f-label">Last Name</label><input type="text" placeholder="Smith" class="f-input"></div>
+          </div>
+          <div><label class="f-label">Email Address</label><input type="email" placeholder="john@email.com" class="f-input"></div>
+          <div><label class="f-label">Phone</label><input type="tel" placeholder="(555) 000-0000" class="f-input"></div>
+          <div>
+            <label class="f-label">Type of Inquiry</label>
+            <select class="f-input">
+              <option value="" disabled selected>Select one...</option>
+              <option>Full Restoration</option>
+              <option>Custom Build</option>
+              <option>Parts Order</option>
+              <option>Custom Tubs / Cabs</option>
+              <option>General Inquiry</option>
+            </select>
+          </div>
+          <div><label class="f-label">Tell us about your project</label><textarea rows="4" placeholder="Year, model, condition, what you're looking for..." class="f-input" style="resize:vertical;"></textarea></div>
+          <button type="submit" class="btn-primary" style="border:none; cursor:pointer; font-family:'Barlow Condensed',sans-serif; width:100%; text-align:center; padding:1rem;">Send It →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer style="background:var(--bg); border-top:2px solid var(--rust-dim); padding:3rem 0;">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+    <div class="footer-row" style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:2.5rem; padding-bottom:2rem; border-bottom:1px solid var(--border);">
+
+      <div>
+        <img src="https://static.wixstatic.com/media/06731e_df59151404f048f9ab4a499907724679~mv2.png/v1/crop/x_20,y_0,w_1230,h_256/fill/w_320,h_67,al_c,q_85,enc_avif,quality_auto/black%20actul_edited.png"
+             alt="Repliclassics"
+             style="height:32px; width:auto; filter:brightness(0) invert(0.8) sepia(0.4) saturate(1.2); display:block; margin-bottom:0.75rem;">
+        <p style="font-family:'Special Elite',monospace; font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-dim);">LLC · Bowling Green, Kentucky</p>
+      </div>
+
+      <div style="display:flex; gap:2.5rem; flex-wrap:wrap;">
+        <a href="#work" style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none; transition:color 0.2s;"
+           onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">Our Work</a>
+        <a href="#about" style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none; transition:color 0.2s;"
+           onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">About</a>
+        <a href="#services" style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none; transition:color 0.2s;"
+           onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">Services</a>
+        <a href="#contact" style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); text-decoration:none; transition:color 0.2s;"
+           onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--text-dim)'">Contact</a>
+      </div>
+
+      <div style="display:flex; gap:0.75rem; align-items:center;">
+        <a href="#" aria-label="Facebook"
+           style="width:38px; height:38px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s, background 0.2s;"
+           onmouseover="this.style.borderColor='var(--rust)'; this.style.background='rgba(155,24,24,0.1)'"
+           onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#9B1818"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram"
+           style="width:38px; height:38px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s, background 0.2s;"
+           onmouseover="this.style.borderColor='var(--rust)'; this.style.background='rgba(155,24,24,0.1)'"
+           onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9B1818" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div style="padding-top:1.75rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; align-items:center;">
+      <p style="font-family:'Special Elite',monospace; font-size:0.72rem; letter-spacing:0.1em; color:rgba(216,201,152,0.5);">© 2025 Repliclassics LLC. All rights reserved.</p>
+      <p style="font-family:'Special Elite',monospace; font-size:0.6rem; letter-spacing:0.1em; color:rgba(122,110,80,0.4);">1500 Louisville Road · Bowling Green, KY 42101 · (270) 770-3030</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // Scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Trigger hero reveals
+  setTimeout(() => {
+    document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('in'), 150 + i * 130);
+    });
+  }, 100);
+
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobile-nav');
+  hamburger.addEventListener('click', function() {
+    const isOpen = this.classList.toggle('open');
+    mobileNav.classList.toggle('open', isOpen);
+    mobileNav.setAttribute('aria-hidden', String(!isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  document.querySelectorAll('#mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+      mobileNav.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+</body>
+</html>
