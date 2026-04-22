@@ -1135,10 +1135,25 @@
   .swatch:hover  { transform: scale(1.12); border-color: rgba(216,201,152,0.5); }
   .swatch.active { border-color: var(--cream); transform: scale(1.08); }
   .swatch:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
-  @media (max-width: 768px) {
+  /* portrait mobile — stack vertically, landscape-shaped viewer */
+  @media (max-width: 768px) and (orientation: portrait) {
     #build-layout { grid-template-columns: 1fr !important; }
-    #truck-viewer { min-height: 340px !important; }
-    #viewer-loading { min-height: 340px !important; }
+    #truck-viewer { min-height: unset !important; aspect-ratio: 16/9 !important; width: 100% !important; height: auto !important; }
+    #viewer-loading { min-height: unset !important; aspect-ratio: 16/9 !important; }
+  }
+  /* landscape mobile — side by side, viewer fills the height */
+  @media (max-width: 900px) and (orientation: landscape) {
+    #build { padding: 3rem 0 !important; }
+    #build > div { padding-left: 1rem !important; padding-right: 1rem !important; }
+    #build-layout { grid-template-columns: 1fr 220px !important; height: calc(100svh - 7rem); }
+    #truck-viewer { min-height: unset !important; height: 100% !important; }
+    #viewer-loading { min-height: unset !important; height: 100% !important; }
+    #build-layout > div:last-child {
+      padding: 1rem 1.25rem !important;
+      overflow-y: auto;
+      gap: 1rem !important;
+    }
+    #swatches { grid-template-columns: repeat(5, 1fr) !important; gap: 5px !important; }
   }
 </style>
 
