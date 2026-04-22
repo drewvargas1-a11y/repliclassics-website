@@ -1137,7 +1137,7 @@
   .swatch:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
   /* portrait mobile — stack vertically, landscape-shaped viewer */
   @media (max-width: 768px) and (orientation: portrait) {
-    #build-layout { grid-template-columns: 1fr !important; }
+    #build-layout { grid-template-columns: 1fr !important; gap: 0 !important; }
     #truck-viewer { min-height: unset !important; aspect-ratio: 16/9 !important; width: 100% !important; height: auto !important; }
     #viewer-loading { min-height: unset !important; aspect-ratio: 16/9 !important; }
   }
