@@ -546,6 +546,7 @@
       <li><a href="#services">Services</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a href="#shop">Parts Shop</a></li>
+      <li><a href="#build">Build Yours</a></li>
       <li><a href="#partners">Partners</a></li>
       <li><a href="team.html">Team</a></li>
     </ul>
@@ -565,6 +566,8 @@
   <a href="#services" class="mobile-nav-link">Services</a>
   <div class="mobile-nav-rule"></div>
   <a href="#shop" class="mobile-nav-link">Parts Shop</a>
+  <div class="mobile-nav-rule"></div>
+  <a href="#build" class="mobile-nav-link">Build Yours</a>
   <div class="mobile-nav-rule"></div>
   <a href="#contact" class="mobile-nav-link">Contact</a>
   <div class="mobile-nav-rule"></div>
@@ -1045,6 +1048,229 @@
     if (!expanded) document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
   });
 
+})();
+</script>
+
+<!-- ═══════════════ BUILD YOURS ═══════════════ -->
+<section id="build" style="padding:6rem 0; background:var(--surface);">
+  <div style="max-width:1340px; margin:0 auto; padding:0 3rem;">
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; margin-bottom:3rem;">
+      <div class="reveal">
+        <p class="eyebrow">— Configurator —</p>
+        <div class="rule-rust"></div>
+        <h2 class="section-heading">BUILD<br>YOURS</h2>
+      </div>
+      <p class="body-copy reveal d1" style="max-width:380px;">Rotate, zoom, and choose a paint color to see how your build could look. Select a shade below to apply it to the truck.</p>
+    </div>
+
+    <div id="build-layout" style="display:grid; grid-template-columns:1fr 320px; gap:2px; background:rgba(216,201,152,0.06); align-items:stretch;">
+
+      <!-- 3D Viewer -->
+      <div style="position:relative; background:var(--bg); min-height:520px;">
+        <iframe id="truck-viewer"
+          src="https://sketchfab.com/models/69376409f80f4ad29791b56bc43836ca/embed?autostart=1&ui_stop=0&ui_infos=0&ui_annotations=0&ui_watermark=0&ui_controls=1&camera=0&preload=1"
+          style="width:100%; height:100%; min-height:520px; border:none; display:block;"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          allowfullscreen></iframe>
+        <!-- loading overlay -->
+        <div id="viewer-loading" style="position:absolute; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; transition:opacity 0.6s;">
+          <p style="font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.08em; color:var(--rust); margin-bottom:0.5rem;">LOADING</p>
+          <p class="stamp" style="font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim);">1967 Chevrolet C10</p>
+        </div>
+      </div>
+
+      <!-- Controls Panel -->
+      <div style="background:var(--raised); padding:2rem 1.75rem; display:flex; flex-direction:column; gap:1.75rem;">
+
+        <!-- Selected color display -->
+        <div>
+          <p class="stamp" style="font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--rust-lit); margin-bottom:0.75rem;">Paint Color</p>
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <div id="color-preview" style="width:36px; height:36px; background:#E8E4D4; border:2px solid rgba(216,201,152,0.2); flex-shrink:0;"></div>
+            <div>
+              <p id="color-name" style="font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:0.04em; color:var(--cream); line-height:1;">Classic White</p>
+              <p id="color-code" style="font-family:'Special Elite',monospace; font-size:0.6rem; letter-spacing:0.12em; color:var(--text-dim);">#E8E4D4</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px; background:var(--border);"></div>
+
+        <!-- Color swatches -->
+        <div>
+          <p class="stamp" style="font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem;">Factory Colors</p>
+          <div id="swatches" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;"></div>
+        </div>
+
+        <div style="height:1px; background:var(--border);"></div>
+
+        <!-- Status -->
+        <div>
+          <p id="api-status" class="stamp" style="font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-dim); line-height:1.6;">Waiting for viewer…</p>
+        </div>
+
+        <!-- Reset -->
+        <button id="reset-color"
+          style="font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--text-dim); padding:0.65rem 1rem; cursor:pointer; transition:border-color 0.2s, color 0.2s;"
+          onmouseover="this.style.borderColor='var(--rust)';this.style.color='var(--cream)'"
+          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'">
+          Reset Color
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .swatch {
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.18s, transform 0.18s;
+    position: relative;
+  }
+  .swatch:hover  { transform: scale(1.12); border-color: rgba(216,201,152,0.5); }
+  .swatch.active { border-color: var(--cream); transform: scale(1.08); }
+  .swatch:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+  @media (max-width: 768px) {
+    #build-layout { grid-template-columns: 1fr !important; }
+    #truck-viewer { min-height: 340px !important; }
+    #viewer-loading { min-height: 340px !important; }
+  }
+</style>
+
+<script src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
+<script>
+(function() {
+  const COLORS = [
+    { name: 'Classic White',    hex: '#E8E4D4' },
+    { name: 'Midnight Black',   hex: '#0D0A06' },
+    { name: 'Cardinal Red',     hex: '#9B1818' },
+    { name: 'Fathom Green',     hex: '#1A3D2B' },
+    { name: 'Glacier Blue',     hex: '#2E5F80' },
+    { name: 'Hugger Orange',    hex: '#C85A1A' },
+    { name: 'Butternut Yellow', hex: '#C8A030' },
+    { name: 'Pewter Silver',    hex: '#7A7870' },
+    { name: 'Desert Sand',      hex: '#C4A882' },
+    { name: 'Dark Espresso',    hex: '#3D2410' },
+    { name: 'Army Olive',       hex: '#4A5240' },
+    { name: 'Cobalt Blue',      hex: '#1B3A6B' },
+  ];
+
+  let api = null;
+  let materials = [];
+  let originalColors = {};
+  let activeHex = null;
+
+  function hexToRgb01(hex) {
+    const r = parseInt(hex.slice(1,3),16)/255;
+    const g = parseInt(hex.slice(3,5),16)/255;
+    const b = parseInt(hex.slice(5,7),16)/255;
+    // sRGB → linear (gamma 2.2) — Sketchfab PBR expects linear values
+    return [Math.pow(r,2.2), Math.pow(g,2.2), Math.pow(b,2.2)];
+  }
+
+  // Build swatches
+  const swatchWrap = document.getElementById('swatches');
+  COLORS.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'swatch' + (i === 0 ? ' active' : '');
+    btn.style.background = c.hex;
+    btn.title = c.name;
+    btn.setAttribute('aria-label', c.name);
+    btn.addEventListener('click', () => selectColor(c, btn));
+    swatchWrap.appendChild(btn);
+  });
+
+  function selectColor(c, btn) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('color-preview').style.background = c.hex;
+    document.getElementById('color-name').textContent = c.name;
+    document.getElementById('color-code').textContent = c.hex;
+    activeHex = c.hex;
+    applyColor(c.hex);
+  }
+
+  function applyColor(hex) {
+    if (!api || !materials.length) return;
+    const rgb = hexToRgb01(hex);
+    const PAINT_KEYWORDS = ['paint', 'body', 'cab', 'truck', 'exterior', 'car', 'metal', 'chevy', 'chassis', 'hood', 'door', 'fender', 'bed'];
+    let painted = 0;
+    materials.forEach(mat => {
+      const n = mat.name.toLowerCase();
+      const isPaint = PAINT_KEYWORDS.some(k => n.includes(k));
+      if (isPaint && mat.channels && mat.channels.AlbedoPBR) {
+        mat.channels.AlbedoPBR.color = rgb;
+        mat.channels.AlbedoPBR.factor = 1;
+        if (mat.channels.AlbedoPBR.texture) mat.channels.AlbedoPBR.texture = null;
+        api.setMaterial(mat, () => {});
+        painted++;
+      }
+    });
+    setStatus(painted > 0 ? `Applied to ${painted} material${painted > 1 ? 's' : ''}` : 'No paint materials matched — try Reset');
+  }
+
+  function setStatus(msg) {
+    document.getElementById('api-status').textContent = msg;
+  }
+
+  // Init Sketchfab API
+  const iframe = document.getElementById('truck-viewer');
+  const client = new Sketchfab(iframe);
+  client.init('69376409f80f4ad29791b56bc43836ca', {
+    autostart: 1,
+    success: function(sfApi) {
+      api = sfApi;
+      api.start();
+      api.addEventListener('viewerready', function() {
+        // Hide loading overlay
+        const overlay = document.getElementById('viewer-loading');
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 650);
+
+        api.getMaterialList(function(err, mats) {
+          if (err) { setStatus('Could not load materials'); return; }
+          materials = mats;
+
+          // Save original colors
+          mats.forEach(m => {
+            if (m.channels && m.channels.AlbedoPBR && m.channels.AlbedoPBR.color) {
+              originalColors[m.name] = [...m.channels.AlbedoPBR.color];
+            }
+          });
+
+          const names = mats.map(m => m.name).join(', ');
+          setStatus('Ready · ' + mats.length + ' materials loaded');
+          console.log('[Repliclassics] Truck materials:', names);
+
+          // Apply default swatch color
+          applyColor(COLORS[0].hex);
+        });
+      });
+    },
+    error: function() { setStatus('Viewer failed to load'); }
+  });
+
+  // Reset
+  document.getElementById('reset-color').addEventListener('click', function() {
+    if (!api || !materials.length) return;
+    materials.forEach(mat => {
+      if (originalColors[mat.name] && mat.channels && mat.channels.AlbedoPBR) {
+        mat.channels.AlbedoPBR.color = originalColors[mat.name];
+        api.setMaterial(mat, () => {});
+      }
+    });
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    document.getElementById('color-preview').style.background = '#110E09';
+    document.getElementById('color-name').textContent = 'Original';
+    document.getElementById('color-code').textContent = '—';
+    activeHex = null;
+    setStatus('Colors reset to original');
+  });
 })();
 </script>
 
